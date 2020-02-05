@@ -1,0 +1,22 @@
+[
+  {
+  "FirstName":"Raj",
+  "LastName":"yadav",
+  "Email":"re@gmail.com",
+  "ContactNo":7983037738,
+  "Pwd":"**********",
+  "Country":"India",
+  "State":"Maharashtra",
+  "City":"pawai"
+  },
+    {
+      "FirstName":"Brad",
+      "LastName":"traversy",
+      "Email":"brad@gmail.com",
+      "ContactNo":4556037738,
+      "Pwd":"**********",
+      "Country":"India",
+      "State":"Delhi",
+      "City":"Noida"
+      }
+]
