@@ -8,8 +8,7 @@ $('#userdetails').on('submit', registrationformaction.fetchdetails);
 $('#subscription-mail').on('submit',registrationformaction.deleteuserdetails);
 
 $('#exampleModal').on('hidden.bs.modal', function (e) {//bootstrap modal closing function
-  $("#usermail").val("");
-  $("#userpassword").val("");
+  $("#userid").val("");
   $(".invalidId").text("");
 });
 

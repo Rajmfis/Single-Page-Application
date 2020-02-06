@@ -89,11 +89,9 @@
           $(".hidecards").hide();
           $(".hidelastcard").hide();
           $(".last-card").hide();
-          // $(".delete").hide();
           resetForm();
-          
         }else{
-          alert("unable to create profile.Please try after sometime");
+          alert("Email  Id Already exists. Please enter another email ID");
         }
       }
     });
@@ -103,15 +101,16 @@
     event.preventDefault();
     event.stopImmediatePropagation();
     var jsonData={
-      "emailId":$("#usermail").val(),
-      "pwd":$("#userpassword").val()
+      // "emailId":$("#usermail").val(),
+      // "pwd":$("#userpassword").val()
+      "id":$("#userid").val()
     };
       $.ajax({
-        type: "get",
-        url: 'http://localhost:8080/profile',
+        type: "post",
+        url: 'http://localhost:8080/user/'+jsonData.id,
         crossDomain: true,
         dataType: 'json',
-        data: jsonData,
+        // data: jsonData,
         success: function(response){
           try {
             var jsonData = response;
@@ -171,10 +170,8 @@
        $(".hidecards").hide();
        $(".hidelastcard").hide();
        $(".last-card").hide();
-      }else if(jsonData.success === -1){
-        $(".invalidId").text("Seems like you are not registered with us. Kindly register yourself");
       }else{
-        $(".invalidId").text("Invalid Credentials");
+        $(".invalidId").text("User Doesn't exist with the ID");
       }
       }catch (error) {
         alert("Error occurred while parsing json "+error);

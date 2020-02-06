@@ -8,55 +8,56 @@ use \Psr\Http\Message\ResponseInterface as Response;
 require '../vendor/autoload.php';
 
 $app = new \Slim\App;
-// $app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
-//     $name = $args['name'];
-//     $response->getBody()->write("Hello, $name");
-
-//     return $response;
-// });
-
-// $app->get('/countries',function(Request $request, Response $response, array $args)use($countries){
-//     return $response->withJson($countries);
-// });
+// $app->add(new HttpBasicAuth('theUsername', 'thePassword'));
 
 $app->post('/users',function(Request $request, Response $response, $args) use($app) {
 
-    // $parsedBody = $request->getBody();
-   
-    // $email = $parsedBody['email'];
-    
+    // $fname = $request->getParam('fname');
+    // $lname = $request->getParam('lname');
+    // $phone = $request->getParam('phone');
+    // $email = $request->getParam('email');
 
-    $fname = $request->getParam('fname');
-    $lname = $request->getParam('lname');
-    $phone = $request->getParam('phone');
-    $email = $request->getParam('email');
-
-    //handle for blank
+    $parsedBody = $request->getParsedBody();
+    $fname = $parsedBody['fname'];
+    $lname = $parsedBody['lname'];
+    $phone = $parsedBody['phone'];
+    $email = $parsedBody['email'];
 
     $password=md5($request->getParam('pwd'));
     $link = mysqli_connect("localhost", "raj", "Raj@199704", "couponusers");
-    $sql = "INSERT INTO users(first_name,last_name,email_id,contact_no,pwd) VALUES ('$fname','$lname','$email','$phone','$password');";
-    // mysqli_query($link, $sql);
-    if(mysqli_query($link, $sql)){
-        return $response->withJson(array("success" => 1, "emailId" => $email ,"fname"=>$fname,"lname"=>$lname,"contactno"=>$phone),200);
-    }else{
-        return $response->withJson(array("success" => 0));
-    }
-    
-});
-
-$app->get('/profile',function(Request $request, Response $response, array $args) {
-
-    $usermail = $request->getParam('emailId');
-    $password=md5($request->getParam('pwd'));
-    $link = mysqli_connect("localhost", "raj", "Raj@199704", "couponusers");
-    $checkuser="SELECT * FROM users WHERE EMAIL_ID = '$usermail'";
+    $checkuser="SELECT * FROM users WHERE EMAIL_ID = '$email'";
     $userexist=mysqli_query($link, $checkuser);
     $checkresult=mysqli_num_rows($userexist);
-    $sql= "SELECT * FROM users WHERE EMAIL_ID = '$usermail' AND  PWD = '".$password."'";
+    // print_r($checkresult);
+    // exit();
+    if($checkresult){
+        return $response->withJson(array("success" => 0,"errormessage"=>"Email_Id already exists","error code"=>404),404);
+        // exit();
+    }
+
+    $sql = "INSERT INTO users(first_name,last_name,email_id,contact_no,pwd) VALUES ('$fname','$lname','$email','$phone','$password');";
+    
+    if(mysqli_query($link, $sql)){
+        $id_Fetch="SELECT ID FROM USERS WHERE EMAIL_ID='$email'";
+        $row=mysqli_fetch_array(mysqli_query($link, $id_Fetch));
+        return $response->withJson(array("success" => 1, "emailId" => $email ,"fname"=>$fname,"lname"=>$lname,"contactno"=>$phone,"ID"=>$row['ID']),201);
+    }
+
+});
+
+$app->post('/user/{id}',function(Request $request, Response $response, array $args) {
+
+    // $usermail = $request->getParam('emailId');
+    // $password=md5($request->getParam('pwd'));
+    $id = $args['id'];
+    $link = mysqli_connect("localhost", "raj", "Raj@199704", "couponusers");
+    $checkuser="SELECT * FROM users WHERE ID = '$id'";
+    $userexist=mysqli_query($link, $checkuser);
+    $checkresult=mysqli_num_rows($userexist);
+    $sql= "SELECT * FROM users WHERE ID = '$id'";
     $result = mysqli_query($link, $sql);
     $numrows = mysqli_num_rows($result);
-    if(mysqli_num_rows($result)>0){
+    if($numrows>0){
         while($row = mysqli_fetch_array($result)){
             $fname=$row[0];
             $lname=$row[1];
@@ -64,45 +65,53 @@ $app->get('/profile',function(Request $request, Response $response, array $args)
             $usercontact=$row[3];
             return $response->withJson(array("success" => 1, "emailId" => $useremail ,"fname" => $fname,"lname" => $lname,"contactno" => $usercontact),200);
         }
-    }else if($checkresult===0){
-        return $response->withJson(array("success" => -1));
-    }else{
-        return $response->withJson(array("success" => 0));
     }
+    return $response->withJson(array("success" => 0,"errormessage"=>"User Doesn't exist","status code"=>404),404);
 
 });
 
-$app->delete('/deleteprofile',function(Request $request, Response $response) use($app) {
+$app->delete('/user/{id}',function(Request $request, Response $response, array $args){
 
-    $usermail = $request->getParam('emailId');
+    $userId = $args['id'];
     $link = mysqli_connect("localhost", "raj", "Raj@199704", "couponusers");
 
-    $sql= "DELETE FROM users WHERE EMAIL_ID ='".$usermail."'";
+    $sql= "DELETE FROM users WHERE ID ='$userId'";
     $result = mysqli_query($link,$sql);
     if(mysqli_affected_rows($link)){
-        return $response->withJson(array("success" => 1),200);
+        return $response->withJson(array(),204);
     }else{
         return $response->withJson(array('success' => 0));
     }
     
 });
 
-$app->put('/updateprofile',function(Request $request, Response $response) use($app) {
+$app->put('/user/{id}',function(Request $request, Response $response,array $args) {
 
+    $userId = $args['id'];
     $link = mysqli_connect("localhost", "raj", "Raj@199704", "couponusers");
   
+    //keeping here getparsed body() throwing warning
+    // $parsedBody = $request->getParsedBody();
+    // $fname = $parsedBody['fname'];
+    // $lname = $parsedBody['lname'];
+    // $phone = $parsedBody['phone'];
+    // $email = $parsedBody['email'];
+
     $fname = $request->getParam('fname');
     $lname = $request->getParam('lname');
     $phone = $request->getParam('phone');
     $email = $request->getParam('email');
-
-    $sql= "UPDATE users set first_name='$fname',last_name='$lname',contact_no='$phone',email_id='$email' WHERE email_id = '$email'";
-
-    if(mysqli_query($link, $sql)){
-        return $response->withJson(array("success" => 1),200);
-    }else{
-        return $response->withJson(array('success' => 0));
+    $checkuser="SELECT * FROM users WHERE ID = '$userId'";
+    $userexist=mysqli_query($link, $checkuser);
+    $checkresult=mysqli_num_rows($userexist);
+    // print_r($checkresult);
+    // exit();
+    if($checkresult){
+        $sql= "UPDATE users set first_name='$fname',last_name='$lname',contact_no='$phone',email_id='$email' WHERE ID = '$userId'";
+        return $response->withJson(array("success" => 1,"message"=>"succesfully updated"),200);
     }
+    return $response->withJson(array("success" => 0,'message'=>'User Doesn\'t Exist'),404);
+    
 });
 
 $app->run();
