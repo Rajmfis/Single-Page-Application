@@ -16,13 +16,13 @@
     event.preventDefault();
     event.stopImmediatePropagation();
     
-
     var jsonObj={
       "fname":$("#firstname").val(),
       "lname":$("#lastname").val(),
       "phone":$("#contactno").val(),
       "email":$("#emailId").val(),
-      "pwd":$("#pwd").val()
+      "pwd":$("#pwd").val(),
+      
     };
     $.ajax({
       type: "POST",
@@ -104,13 +104,13 @@
       // "emailId":$("#usermail").val(),
       // "pwd":$("#userpassword").val()
       "id":$("#userid").val()
+      // "key":"IVJhakAxOTk3MDQj"
     };
       $.ajax({
         type: "post",
-        url: 'http://localhost:8080/user/'+jsonData.id,
+        url: 'http://localhost:8080/users/'+jsonData.id,
         crossDomain: true,
         dataType: 'json',
-        // data: jsonData,
         success: function(response){
           try {
             var jsonData = response;
@@ -124,7 +124,7 @@
              '<ul class="navbar-nav ml-auto">'+
                '<li class="nav-item"> <a class="nav-link" href="#"><span style="color:whitesmoke;font-size: x-large;">Home</span></a>'+
                '</li>'+
-               '<li class="nav-item"> <a class="nav-link" id="delbtn" href="#"><span style="color:whitesmoke;font-size: x-large;">DeleteUser</span></a>'+
+              //  '<li class="nav-item"> <a class="nav-link" id="delbtn" href="#"><span style="color:whitesmoke;font-size: x-large;">DeleteUser</span></a>'+
               '</li>'+
                '<li class="nav-item needmargin"> <a class="nav-link" href="#"><span style="color:whitesmoke;font-size:x-large;">Subscription</span></a>'+
                        '</li>'+
@@ -141,7 +141,7 @@
          '<div class="col-sm-6">'+
            '<div class="card">'+
              '<div class="card-body">'+
-               '<h5 class="card-title">Welcome'+jsonData.fname+'</h5>'+
+               '<h5 class="card-title">Welcome '+jsonData.fname+'</h5>'+
                '<p class="card-text">You are subscribed for our Services</p>'+
                '<a href="#" class="btn btn-primary">Explore more about new Services</a>'+
              '</div>'+
@@ -183,38 +183,45 @@
   function deleteUser(){
     
     if($("#subsmail").val()==''){
-      return;
+      alert("please enter the id");
     }
     event.preventDefault();
     event.stopImmediatePropagation();
     var form = $("#subscription-mail");
     var originalContent = form.html();
     var jsonData={
-      "emailId":$("#subsmail").val()
+      "id":$("#subsmail").val()
     };
       $.ajax({
         type: "delete",
-        url: 'http://localhost:8080/deleteprofile',
+        url: 'http://localhost:8080/users/'+jsonData.id,
         crossDomain: true,
         dataType: 'json',
-        data: jsonData,
-        success: function(response){
-          try {
-            var jsonData = response;
-            // alert("1");
-            if (jsonData.success === 1){
-              form.html("<h3>User Deleted</h3>");
+        // data: jsonData,
+        statusCode: {
+          204: function() {
+            form.html("<h3>User Deleted</h3>");
                 setTimeout(function() {
                 form.html(originalContent);
               }, 5000);
-            }else{
+          }
+        },
+        success: function(response){
+          try {
+            var jsonData = response;
+            if (jsonData.success === 0){
+              // form.html("<h3>User Deleted</h3>");
+              //   setTimeout(function() {
+              //   form.html(originalContent);
+              // }, 5000);
+            // }else{
               form.html("<h3>User doesn't exist</h3>");
               setTimeout(function() {
               form.html(originalContent);
             }, 5000);
             }
           }catch (error) {
-            alert("Error occurred while parsing json "+error);
+            // alert("Error occurred while parsing json "+error);
           }
         }
       });

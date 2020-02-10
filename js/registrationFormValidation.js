@@ -28,23 +28,23 @@
   var registerForm = $("#form");
   var subscribeMail=$("#subscription-mail");
   
-  subscribeMail.validate({
-    onkeyup: function(element) {
-      $(element).valid()
-     },
-     rules:{
-      email: {
-        required: true,
-        customEmail: true
-       },
-     },
-     messages:{
-      email: {
-        required: 'Please enter email!',
-        email: 'Please enter valid email!'
-       },
-     }
-  });
+  // subscribeMail.validate({
+  //   onkeyup: function(element) {
+  //     $(element).valid()
+  //    },
+  //    rules:{
+  //     email: {
+  //       required: true,
+  //       customEmail: true
+  //      },
+  //    },
+  //    messages:{
+  //     email: {
+  //       required: 'Please enter email!',
+  //       email: 'Please enter valid email!'
+  //      },
+  //    }
+  // });
 
   // if(firstname&&lastname&&password&&inputEmail&&phone){
   registerForm.validate({
@@ -132,7 +132,7 @@
   xhr.send();
  })();
  
- //adding events in js is removing the message. try to find out ?????
+//adding events in js is removing the message. try to find out ?????
 //  $('#subscription-mail').submit(function emailSubscribe(e){
 
 //   if($('#subsmail').val()===''){
