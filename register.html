@@ -41,7 +41,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Enter your id</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Enter your id and password</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -49,6 +49,8 @@
       <div class="modal-body">
 			 <form method="post" id="userdetails">
 				<label>Id: <input type="text" class="form-control" name="id" id="userid" required></label>
+				<label>Password: <input type="password" class="form-control" type="" name="pwd" id="userpwd" required></label>
+				
 				<!-- <label>Password: <input type="password" class="form-control" name="pwd" id="userpassword" required></label> -->
 				<p class="invalidId" style="color:red;"></p>
 				<input type="submit" class="fetchbtn btn btn-primary" >
@@ -191,8 +193,8 @@
 		<div class="card-body text-center">
 		 <form id="subscription-mail">	
 			<h5 class="card-title " style="font-size: 35px;">Want to get unsubscribed from maillist</h5>
-			<p class="card-text" style="font-size: 25px;">Enter your mailId</p>
-			<input type="text" name="email" id="subsmail" placeholder="example@gmail.com" class="form-control"><br>
+			<p class="card-text" style="font-size: 25px;">Enter your unique Id</p>
+			<input type="text" name="email" id="subsmail" placeholder="e.g 31" class="form-control"><br>
 			<!-- <button type="submit" onclick="emailSubscribe();" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Get 2 free coupons now">
 				Submit
 			</button> -->

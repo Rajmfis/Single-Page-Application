@@ -4,6 +4,7 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS,PUT, DELETE");
 header('Content-Type: application/json');
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
+use \Firebase\JWT\JWT;
 
 require '../vendor/autoload.php';
 
@@ -19,7 +20,7 @@ $mw = function ($request, $response, $next) {
     }else{
         return $response->withJson(array("success" => 0,"errormessage"=>"Authorized key not matched","error code"=>401),401);
     }
-
+    
 };
 
 $app->post('/users',function(Request $request, Response $response){
@@ -52,18 +53,18 @@ $app->post('/users',function(Request $request, Response $response){
         return $response->withJson(array("success" => 1, "emailId" => $email ,"fname"=>$fname,"lname"=>$lname,"contactno"=>$phone,"ID"=>$row['ID']),201);
     }
 
-})->add($mw);
+});
 
 $app->post('/users/{id}',function(Request $request, Response $response, array $args)  use($app){
 
     // $usermail = $request->getParam('emailId');
-    // $password=md5($request->getParam('pwd'));
+    $password=md5($request->getParam('pwd'));
     $id = $args['id'];
     $link = mysqli_connect("localhost", "raj", "Raj@199704", "couponusers");
     $checkuser="SELECT * FROM users WHERE ID = '$id'";
     $userexist=mysqli_query($link, $checkuser);
     $checkresult=mysqli_num_rows($userexist);
-    $sql= "SELECT * FROM users WHERE ID = '$id'";
+    $sql= "SELECT * FROM users WHERE ID = '$id' and pwd='$password'";
     $result = mysqli_query($link, $sql);
     $numrows = mysqli_num_rows($result);
     if($numrows>0){
@@ -75,7 +76,10 @@ $app->post('/users/{id}',function(Request $request, Response $response, array $a
             return $response->withJson(array("success" => 1, "emailId" => $useremail ,"fname" => $fname,"lname" => $lname,"contactno" => $usercontact),200);
         }
     }
-    return $response->withJson(array("success" => 0,"errormessage"=>"User Doesn't exist","status code"=>200),200);
+    // if($checkresult===0){
+    //     return $response->withJson(array("success" => 0,"errormessage"=>"Password doesn't match","error code"=>200),200);
+    // }
+    return $response->withJson(array("success" => 0,"errormessage"=>"Invalid Credentials","status code"=>200),200);
 });
 
 $app->delete('/users/{id}',function(Request $request, Response $response, array $args){
@@ -116,10 +120,11 @@ $app->put('/users/{id}',function(Request $request, Response $response,array $arg
     // exit();
     if($checkresult){
         $sql= "UPDATE users set first_name='$fname',last_name='$lname',contact_no='$phone',email_id='$email' WHERE ID = '$userId'";
+        mysqli_query($link,$sql);
         return $response->withJson(array("success" => 1,"message"=>"succesfully updated"),200);
     }
     return $response->withJson(array("success" => 0,'message'=>'User Doesn\'t Exist'),400);
     
-});
+})->add($mw);
 
 $app->run();

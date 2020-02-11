@@ -22,7 +22,6 @@
       "phone":$("#contactno").val(),
       "email":$("#emailId").val(),
       "pwd":$("#pwd").val(),
-      
     };
     $.ajax({
       type: "POST",
@@ -30,8 +29,6 @@
       crossDomain: true,
       dataType: 'json',
       data: jsonObj,
-      // dataType: "json",
-      // contentType: "application/json; charset=utf-8",
       success: function(response){
         var jsonData = response;
         if(jsonData.success === 1){
@@ -103,7 +100,8 @@
     var jsonData={
       // "emailId":$("#usermail").val(),
       // "pwd":$("#userpassword").val()
-      "id":$("#userid").val()
+      "id":$("#userid").val(),
+      "pwd":$("#userpwd").val()
       // "key":"IVJhakAxOTk3MDQj"
     };
       $.ajax({
@@ -111,6 +109,7 @@
         url: 'http://localhost:8080/users/'+jsonData.id,
         crossDomain: true,
         dataType: 'json',
+        data:jsonData,
         success: function(response){
           try {
             var jsonData = response;
@@ -171,7 +170,7 @@
        $(".hidelastcard").hide();
        $(".last-card").hide();
       }else{
-        $(".invalidId").text("User Doesn't exist with the ID");
+        $(".invalidId").text(response.errormessage);
       }
       }catch (error) {
         alert("Error occurred while parsing json "+error);

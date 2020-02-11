@@ -9,6 +9,7 @@ $('#subscription-mail').on('submit',registrationformaction.deleteuserdetails);
 
 $('#exampleModal').on('hidden.bs.modal', function (e) {//bootstrap modal closing function
   $("#userid").val("");
+  $("#userpwd").val("");
   $(".invalidId").text("");
 });
 
